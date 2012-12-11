@@ -9,7 +9,7 @@
 ifdef NDK_ROOT
 
 MY_ROOT_PATH := $(call my-dir)
-MY_CLIENT_PATH := $(MY_ROOT_PATH)/../../../client
+MY_CLIENT_PATH := $(MY_ROOT_PATH)/target/unpack/client
 MY_THIRD_PARTY_PATH := $(MY_ROOT_PATH)/../../../third_party
 MY_GTEST_PATH := $(MY_THIRD_PARTY_PATH)/gtest
 MY_WEBRTC_PATH := $(MY_THIRD_PARTY_PATH)/webrtc
