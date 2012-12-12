@@ -9,11 +9,12 @@
 ifdef NDK_ROOT
 
 MY_ROOT_PATH := $(call my-dir)
-MY_CLIENT_PATH := $(MY_ROOT_PATH)/target/unpack/client
+MY_CLIENT_PATH := $(MY_ROOT_PATH)/../target/unpack
 MY_THIRD_PARTY_PATH := $(MY_ROOT_PATH)/../../../third_party
 MY_GTEST_PATH := $(MY_THIRD_PARTY_PATH)/gtest
 MY_WEBRTC_PATH := $(MY_THIRD_PARTY_PATH)/webrtc
 MY_ANDROID_MAKE_FILES_PATH := $(MY_ROOT_PATH)/android_makefiles
+MY_ANDROID_CLIENT_PATH := $(call my-dir)/../target/unpack/client
 
 include $(MY_WEBRTC_PATH)/common_audio/resampler/Android.mk
 include $(MY_WEBRTC_PATH)/common_audio/signal_processing/Android.mk
@@ -160,15 +161,15 @@ LOCAL_MODULE := libvoiceclient
 LOCAL_CPP_EXTENSION := .cc
 LOCAL_SRC_FILES := \
 	voiceclient_main.cc \
-	../../../client/helpers.cc \
-	../../../client/presenceouttask.cc \
-	../../../client/presencepushtask.cc \
-	../../../client/clientsignalingthread.cc \
-	../../../client/voiceclient.cc \
-	../../../client/txmppauth.cc \
-	../../../client/txmpppump.cc \
-	../../../client/txmppsocket.cc \
-	../../../client/xmpplog.cc \
+	../target/unpack/client/helpers.cc \
+	../target/unpack/client/presenceouttask.cc \
+	../target/unpack/client/presencepushtask.cc \
+	../target/unpack/client/clientsignalingthread.cc \
+	../target/unpack/client/voiceclient.cc \
+	../target/unpack/client/txmppauth.cc \
+	../target/unpack/client/txmpppump.cc \
+	../target/unpack/client/txmppsocket.cc \
+	../target/unpack/client/xmpplog.cc 
 
 LOCAL_CFLAGS := \
 	$(WEBRTC_LOGIN_CREDENTIALS) \
@@ -197,7 +198,7 @@ LOCAL_CFLAGS := \
 
 LOCAL_C_INCLUDES := \
 	$(MY_CLIENT_PATH)/../ \
-    $(MY_WEBRTC_PATH) \
+        $(MY_WEBRTC_PATH) \
 	$(MY_THIRD_PARTY_PATH)/libjingle \
 	$(MY_THIRD_PARTY_PATH)/webrtc/system_wrappers/interface \
 	$(MY_THIRD_PARTY_PATH)/webrtc/voice_engine/include \
@@ -205,7 +206,9 @@ LOCAL_C_INCLUDES := \
 	$(MY_THIRD_PARTY_PATH)/webrtc/modules/utility/interface \
 	$(MY_THIRD_PARTY_PATH)/webrtc/modules/audio_device/main/interface \
 	$(MY_THIRD_PARTY_PATH)/webrtc/modules/audio_processing/include \
-	$(MY_THIRD_PARTY_PATH)/webrtc/voice_engine
+	$(MY_THIRD_PARTY_PATH)/webrtc/voice_engine \
+	$(MY_CLIENT_PATH)
+
 
 LOCAL_PRELINK_MODULE := false
 LOCAL_WHOLE_STATIC_LIBRARIES := \
