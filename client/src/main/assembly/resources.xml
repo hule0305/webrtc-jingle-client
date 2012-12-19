@@ -6,7 +6,7 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}/src/main/jni</directory>
+            <directory>${project.basedir}/src/main/native</directory>
             <outputDirectory/>
         </fileSet>
     </fileSets>
