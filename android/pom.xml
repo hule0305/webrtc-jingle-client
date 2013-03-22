@@ -12,8 +12,7 @@
 
     <modules>
         <module>voice-client-core</module>
-        <module>voice-client-aidl</module>
-        <module>voice-client-example</module>
+        <module>voice-client-native</module>
     </modules>
     <scm>
         <url>https://github.com/lukeweber/webrtc-jingle-client/</url>

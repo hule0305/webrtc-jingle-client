@@ -51,7 +51,6 @@
 #include "client/keepalivetask.h"
 #include "client/status.h"
 #include "client/txmpppump.h"  // Needed for TXmppPumpNotify
-#include "client/voiceclient.h"
 
 namespace talk_base {
 class BasicNetworkManager;
@@ -74,6 +73,19 @@ class PresenceOutTask;
 }
 
 namespace tuenti {
+
+typedef struct {
+  std::string stun;
+  std::string turn;
+  std::string turn_username;
+  std::string turn_password;
+  std::string ToString() {
+    std::stringstream stream;
+    stream << "[stun=(" << stun << "),";
+    stream << "turn=(" << turn << ")]";
+    return stream.str();
+  }
+} StunConfig;
 
 class TXmppPump;
 class VoiceClientNotify;
@@ -264,7 +276,8 @@ class ClientSignalingThread
                       cricket::Session::State state);
   void OnSessionError(cricket::Call* call, cricket::Session* session,
                       cricket::Session::Error error);
-  void OnStatusUpdate(const buzz::Status& status);
+  void OnContactAdded(const std::string& jid, const std::string& name,
+		  	  	  	  int available);
   // OnStateChange Needed by TXmppPumpNotify maybe better in another class
   void OnStateChange(buzz::XmppEngine::State state);
   void OnXmppSocketClose(int state);
@@ -304,9 +317,11 @@ class ClientSignalingThread
   sigslot::signal1<const XmppMessage> SignalXmppMessage;
 
   sigslot::signal0<> SignalAudioPlayout;
+
   sigslot::signal0<> SignalBuddyListReset;
-  sigslot::signal1<const RosterItem> SignalBuddyListRemove;
-  sigslot::signal1<const RosterItem> SignalBuddyListAdd;
+  sigslot::signal1<const std::string&> SignalBuddyListRemove;
+  sigslot::signal3<const std::string&, const std::string&, int> SignalBuddyListAdd;
+
   sigslot::signal1<const char *> SignalStatsUpdate;
 
 
@@ -339,10 +354,6 @@ class ClientSignalingThread
 
   void SetPortAllocatorFilter(uint32 filter) { port_allocator_filter_ = filter; };
 
-  // data
-  typedef std::map<std::string, RosterItem> RosterMap;
-  typedef std::map<std::string, int> BuddyListMap;
-
   std::string turn_username_;
   std::string turn_password_;
 
@@ -357,8 +368,6 @@ class ClientSignalingThread
 
   talk_base::Thread *signal_thread_;
   talk_base::scoped_ptr<talk_base::Thread> main_thread_;
-  RosterMap *roster_;
-  BuddyListMap *buddy_list_;
   buzz::PresenceOutTask* presence_out_;
   buzz::PingTask* ping_task_;
   KeepAliveTask * keepalive_task_;
