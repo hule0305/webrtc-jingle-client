@@ -169,7 +169,6 @@ LOCAL_CPP_EXTENSION := .cc
 
 LOCAL_SRC_FILES := \
     client/helpers.cc \
-    client/voiceclient.cc \
     voiceclient_main.cc
 
 LOCAL_C_INCLUDES := \

@@ -29,8 +29,6 @@
 #include <vector>
 #include <memory>
 
-#include "com_tuenti_voice_core_VoiceClient.h"
-
 #include "client/voiceclient.h"
 #include "client/logging.h"
 #include "client/xmppmessage.h"
@@ -40,8 +38,7 @@
 
 namespace tuenti {
 
-VoiceClient::VoiceClient(JavaObjectReference *reference) {
-    reference_ = reference;
+VoiceClient::VoiceClient() {
     Init();
 }
 
@@ -54,36 +51,7 @@ void VoiceClient::Init() {
   LOGI("VoiceClient::VoiceClient - new ClientSignalingThread "
           "client_signaling_thread_@(0x%x)",
           reinterpret_cast<int>(client_signaling_thread_));
-
   client_signaling_thread_  = new tuenti::ClientSignalingThread();
-  client_signaling_thread_->SignalCallStateChange.connect(
-      this, &VoiceClient::OnSignalCallStateChange);
-  client_signaling_thread_->SignalCallError.connect(
-      this, &VoiceClient::OnSignalCallError);
-  client_signaling_thread_->SignalAudioPlayout.connect(
-      this, &VoiceClient::OnSignalAudioPlayout);
-  client_signaling_thread_->SignalCallTrackerId.connect(
-      this, &VoiceClient::OnSignalCallTrackerId);
-
-  client_signaling_thread_->SignalXmppError.connect(
-      this, &VoiceClient::OnSignalXmppError);
-  client_signaling_thread_->SignalXmppSocketClose.connect(
-      this, &VoiceClient::OnSignalXmppSocketClose);;
-  client_signaling_thread_->SignalXmppStateChange.connect(
-      this, &VoiceClient::OnSignalXmppStateChange);
-
-  client_signaling_thread_->SignalBuddyListReset.connect(
-      this, &VoiceClient::OnSignalBuddyListReset);
-  client_signaling_thread_->SignalBuddyListRemove.connect(
-      this, &VoiceClient::OnSignalBuddyListRemove);
-  client_signaling_thread_->SignalBuddyListAdd.connect(
-      this, &VoiceClient::OnSignalBuddyListAdd);
-  client_signaling_thread_->SignalXmppMessage.connect(
-      this, &VoiceClient::OnSignalXmppMessage);
-  #ifdef LOGGING
-  client_signaling_thread_->SignalStatsUpdate.connect(
-      this, &VoiceClient::OnSignalStatsUpdate);
-  #endif
 }
 
 void VoiceClient::Login(const std::string &username,
@@ -170,61 +138,8 @@ void VoiceClient::DeclineCall(uint32 call_id, bool busy) {
   }
 }
 
-void VoiceClient::OnSignalCallStateChange(int state, const char *remote_jid, int call_id) {
-  CALLBACK_DISPATCH(reference_, com_tuenti_voice_core_VoiceClient_CALL_STATE_EVENT, state, remote_jid, call_id);
-}
-
-void VoiceClient::OnSignalAudioPlayout() {
-  CALLBACK_DISPATCH(reference_, com_tuenti_voice_core_VoiceClient_AUDIO_PLAYOUT_EVENT, 0, "", 0);
-}
-
-void VoiceClient::OnSignalCallError(int error, int call_id) {
-  CALLBACK_DISPATCH(reference_, com_tuenti_voice_core_VoiceClient_CALL_ERROR_EVENT, error, "", call_id);
-}
-
-void VoiceClient::OnSignalXmppError(int error) {
-  CALLBACK_DISPATCH(reference_, com_tuenti_voice_core_VoiceClient_XMPP_ERROR_EVENT, error, "", 0);
-}
-
-void VoiceClient::OnSignalXmppSocketClose(int state) {
-  CALLBACK_DISPATCH(reference_, com_tuenti_voice_core_VoiceClient_XMPP_SOCKET_CLOSE_EVENT, state, "", 0);
-}
-
-void VoiceClient::OnSignalXmppStateChange(int state) {
-  CALLBACK_DISPATCH(reference_, com_tuenti_voice_core_VoiceClient_XMPP_STATE_EVENT, state, "", 0);
-}
-
-void VoiceClient::OnSignalBuddyListReset() {
-  LOGI("Resetting buddy list");
-  CALLBACK_DISPATCH(reference_, com_tuenti_voice_core_VoiceClient_BUDDY_LIST_EVENT, RESET, "", 0);
-}
-
-void VoiceClient::OnSignalBuddyListRemove(const std::string& jid) {
-  CALLBACK_DISPATCH(reference_, com_tuenti_voice_core_VoiceClient_BUDDY_LIST_EVENT, REMOVE, jid.c_str(), 0);
-}
-
-void VoiceClient::OnSignalBuddyListAdd(const std::string& jid, const std::string& nick, int available) {
-  CALLBACK_START("handleBuddyAdded", "(Ljava/lang/String;Ljava/lang/String;I)V", reference_);
-  if (mid != NULL) {
-    jstring jid_jni = env->NewStringUTF(jid.c_str());
-    jstring nick_jni = env->NewStringUTF(nick.c_str());
-    jint available_jni = available;
-    env->CallVoidMethod(reference_->handler_object, mid, jid_jni, nick_jni, available_jni);
-  }
-  DETACH_FROM_VM(reference_);
-}
-
-void VoiceClient::OnSignalStatsUpdate(const char *stats) {
-  LOGI("Updating stats=%s", stats);
-  CALLBACK_DISPATCH(reference_, com_tuenti_voice_core_VoiceClient_STATS_UPDATE_EVENT, 0, stats, 0);
-}
-
-void VoiceClient::OnSignalCallTrackerId(int call_id, const char* call_tracker_id) {
-  CALLBACK_DISPATCH(reference_, com_tuenti_voice_core_VoiceClient_CALL_TRACKER_ID_EVENT, 0, call_tracker_id, call_id);
-}
-
-void VoiceClient::OnSignalXmppMessage(const XmppMessage m){
-  //Implement me.
+ClientSignalingThread* VoiceClient::SignalingThread() {
+	return client_signaling_thread_;
 }
 
 }  // namespace tuenti

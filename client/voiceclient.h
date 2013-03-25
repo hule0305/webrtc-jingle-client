@@ -27,9 +27,6 @@
 #ifndef CLIENT_VOICECLIENT_H_
 #define CLIENT_VOICECLIENT_H_
 
-#include <jni.h>
-#include "client/helpers.h"
-
 #include <string>
 
 #include "talk/p2p/base/session.h"
@@ -46,18 +43,12 @@
 
 namespace tuenti {
 
-typedef enum {
-  ADD,
-  REMOVE,
-  RESET
-} BuddyList;
-
 class ClientSignalingThread;
 
 class VoiceClient: public sigslot::has_slots<> {
  public:
   // initialization
-  explicit VoiceClient(JavaObjectReference *reference);
+  explicit VoiceClient();
   ~VoiceClient();
   void Init();
   void Destroy();
@@ -77,25 +68,13 @@ class VoiceClient: public sigslot::has_slots<> {
   void DeclineCall(uint32 call_id, bool busy);
   void ReplaceTurn(const std::string &turn);
 
-  // signals
-  void OnSignalCallStateChange(int state, const char *remote_jid, int call_id);
-  void OnSignalCallError(int error, int call_id);
-  void OnSignalAudioPlayout();
-  void OnSignalXmppMessage(const XmppMessage msg);
+  ClientSignalingThread* SignalingThread();
 
-  void OnSignalXmppError(int error);
-  void OnSignalXmppSocketClose(int state);
-  void OnSignalXmppStateChange(int state);
-  void OnSignalBuddyListReset();
-  void OnSignalBuddyListRemove(const std::string& jid);
-  void OnSignalBuddyListAdd(const std::string& jid, const std::string& nick, int available);
-  void OnSignalStatsUpdate(const char *stats);
-  void OnSignalCallTrackerId(int call_id, const char *call_tracker_id);
+private:
 
   std::string stunserver_;
   std::string relayserver_;
-  JavaObjectReference *reference_;
-  tuenti::ClientSignalingThread *client_signaling_thread_;
+  ClientSignalingThread *client_signaling_thread_;
   StunConfig *stun_config_;
   talk_base::CriticalSection destroy_cs_;
 };

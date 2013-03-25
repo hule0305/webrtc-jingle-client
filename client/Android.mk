@@ -16,6 +16,7 @@ LOCAL_SRC_FILES := \
 	txmppauth.cc \
 	txmpppump.cc \
 	txmppsocket.cc \
+	voiceclient.cc \
 	xmpplog.cc
 
 LOCAL_CFLAGS := \
