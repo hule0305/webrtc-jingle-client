@@ -34,15 +34,16 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>voice-core</artifactId>
+            <artifactId>voice-aidl</artifactId>
             <version>${project.version}</version>
             <type>apklib</type>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>voice-aidl</artifactId>
+            <artifactId>voice-native</artifactId>
             <version>${project.version}</version>
-            <type>apklib</type>
+            <classifier>${android.ndk.architecture}</classifier>
+            <type>so</type>
         </dependency>
     </dependencies>
 
@@ -70,6 +71,9 @@
                 <configuration>
                     <apkDebug>${android.apk.debug}</apkDebug>
                     <manifestDebuggable>${android.manifest.debuggable}</manifestDebuggable>
+                    <nativeLibrariesDependenciesHardwareArchitectureDefault>
+                        ${android.ndk.architecture}
+                    </nativeLibrariesDependenciesHardwareArchitectureDefault>
                 </configuration>
             </plugin>
 

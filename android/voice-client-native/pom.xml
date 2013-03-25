@@ -20,20 +20,12 @@
                 <artifactId>android-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
+                    <applicationMakefile>${android.ndkappfile}</applicationMakefile>
                     <nativeLibrariesOutputDirectory>libs</nativeLibrariesOutputDirectory>
                     <target>all</target>
                     <ndkFinalLibraryName>voiceclient</ndkFinalLibraryName>
                     <maxJobs>true</maxJobs>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>executeNdk</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>ndk-build</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
